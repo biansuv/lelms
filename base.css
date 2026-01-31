@@ -16,7 +16,11 @@ body {
   min-height: 100vh;
   background: #f4f6f8;
   padding-bottom: 50px; /* space for fixed footer */
+
+  display: flex;
+  flex-direction: column;
 }
+
 
 /* =====================================================
    MAIN CONTAINER (COMMON)
@@ -76,6 +80,24 @@ html {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+/* ---------- Header ---------- */
+.site-header {
+  background: #2cc7a2;
+  color: white;
+  padding: 18px 12px;
+  text-align: center;
+}
+
+.site-header h1 {
+  margin: 0;
+  font-size: 22px;
+}
+
+.site-header p {
+  margin: 6px 0 0;
+  font-size: 14px;
 }
 
 
