@@ -11,13 +11,6 @@
 
 <style>
 
-body {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 10px;
-}
-
 
 .login-box {
     background: #ffffff;
@@ -66,6 +59,15 @@ button:hover {
     background: #28b08f;
 }
 
+main {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+
 .login-footer {
     margin-top: 15px;
     font-size: 13px;
@@ -78,10 +80,19 @@ button:hover {
     font-weight: bold;
 }
 
+
 </style>
 </head>
 
 <body>
+
+  <!-- Header Injection Target -->
+  <div id="header-container"></div>
+
+<main>
+
+
+
 
 <div class="login-box">
     <h2>Literacy Education</h2>
@@ -100,6 +111,8 @@ button:hover {
     </div>
 
 </div>
+
+</main>
 
 <script>
 
@@ -168,11 +181,27 @@ function logout() {
 
 </script>
 
+<!-- Inject Header -->
+  <script>
+    fetch("header.html")
+      .then(res => res.text())
+      .then(data => {
+        document.getElementById("header-container").innerHTML = data;
+      });
+  </script>
+
+
+
+
+<!-- Inject Footer -->
+
 <link rel="stylesheet" href="footer.css">
 <script src="footer.js"></script>
 <script>
   renderFooter();
 </script>
+
+
 
 
 
