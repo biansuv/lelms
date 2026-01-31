@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+
+<link rel="stylesheet" href="base.css">
+
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Teacher Dashboard – Literacy LMS</title>
+
+<style>
+
+body {
+    padding: 10px;
+}
+
+
+/* ---------- Shared Header ---------- */
+.top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+.top-bar h2 {
+    margin: 0;
+    font-size: 20px;
+    color: #2c3e50;
+}
+.logout-btn {
+    background: #e74c3c;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 6px 10px;
+    cursor: pointer;
+}
+
+/* ---------- Section ---------- */
+.section {
+    background: #fff;
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 6px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+.section h3 { margin-top: 0; }
+
+/* ---------- Form ---------- */
+label {
+    display: block;
+    margin-top: 10px;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+input, textarea, select {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    font-size: 14px;
+}
+
+textarea { resize: vertical; }
+
+/* ---------- Buttons ---------- */
+.upload-btn {
+    margin-top: 12px;
+    padding: 8px 12px;
+    font-size: 14px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    background: #2cc7a2;
+    color: white;
+}
+
+.delete-btn {
+    padding: 5px 8px;
+    font-size: 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    background: #c0392b;
+    color: white;
+}
+
+/* ---------- Table ---------- */
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    font-size: 14px;
+}
+th { background: #f1f1f1; }
+
+.empty {
+    font-size: 13px;
+    color: #777;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 768px) {
+    table, thead, tbody, th, td, tr {
+        display: block;
+    }
+    thead { display: none; }
+    tr {
+        border: 1px solid #ddd;
+        margin-bottom: 10px;
+        border-radius: 4px;
+        padding: 8px;
+    }
+    td {
+        border: none;
+        padding: 4px 0;
+    }
+    td::before {
+        content: attr(data-label);
+        font-weight: bold;
+        display: block;
+        color: #555;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- ================= ATTENDANCE ================= -->
+<div class="section">
+<h3>Mark Attendance</h3>
+
+<p><b>Date:</b> <span id="attDate"></span></p>
+
+<select id="attStatus">
+    <option value="">-- Select Status --</option>
+    <option value="Present">Present</option>
+    <option value="Absent">Absent</option>
+    <option value="Leave">Leave</option>
+</select>
+
+<button class="upload-btn" onclick="markAttendance()">Submit Attendance</button>
+
+<div id="attMsg" class="empty"></div>
+</div>
+
+
+
+<!-- ================= ANNOUNCEMENTS ================= -->
+<div class="section">
+    <h3>Announcements</h3>
+    <div id="annList"></div>
+    <div id="annEmpty" class="empty"></div>
+</div>
+
+
+
+<!-- ================= UPLOAD NOTES ================= -->
+<div class="section">
+<h3>Upload Notes</h3>
+
+<label>Class</label>
+<select id="className">
+    <option value="">-- Select Class --</option>
+</select>
+
+<label>Subject</label>
+<select id="subject">
+    <option value="">-- Select Subject --</option>
+</select>
+
+<label>Title</label>
+<input type="text" id="title">
+
+<label>Description</label>
+<textarea id="description" rows="3"></textarea>
+
+<label>File</label>
+<input type="file" id="file">
+
+<button class="upload-btn" onclick="uploadNote()">Upload</button>
+</div>
+
+
+<!-- ================= UPLOAD HOMEWORK ================= -->
+<div class="section">
+<h3>Upload Homework</h3>
+
+<label>Class</label>
+<select id="hwClass">
+    <option value="">-- Select Class --</option>
+</select>
+
+<label>Subject</label>
+<select id="hwSubject">
+    <option value="">-- Select Subject --</option>
+</select>
+
+<label>Homework Title</label>
+<input type="text" id="hwTitle">
+
+<label>Description</label>
+<textarea id="hwDescription" rows="3"></textarea>
+
+<label>File (optional)</label>
+<input type="file" id="hwFile">
+
+<button class="upload-btn" onclick="uploadHomework()">Upload Homework</button>
+</div>
+
+
+
+
+
+
+
+
+
+<!-- ================= MY UPLOADED NOTES ================= -->
+<div class="section">
+<h3>My Uploaded Notes</h3>
+
+<table>
+<thead>
+<tr>
+<th>Title</th>
+<th>Class</th>
+<th>Subject</th>
+<th>File</th>
+<th>Uploaded On</th>
+<th>Actions</th>
+</tr>
+</thead>
+<tbody id="notesTable"></tbody>
+</table>
+
+<div id="notesEmpty" class="empty"></div>
+</div>
+
+
+<!-- ================= MY HOMEWORK ================= -->
+<div class="section">
+<h3>My Uploaded Homework</h3>
+
+<table>
+<thead>
+<tr>
+<th>Title</th>
+<th>Class</th>
+<th>Subject</th>
+<th>File</th>
+<th>Assigned On</th>
+<th>Actions</th>
+</tr>
+</thead>
+<tbody id="hwTable"></tbody>
+</table>
+
+<div id="hwEmpty" class="empty"></div>
+</div>
+
+<!-- ✅ SHARED SCRIPTS (ORDER MATTERS) -->
+<script src="config.js"></script>
+<script src="auth.js"></script>
+<script src="header.js"></script>
+
+<script>
+/* =====================================================
+   ROUTE PROTECTION
+===================================================== */
+const loggedUser = JSON.parse(localStorage.getItem("loggedUser"));
+if (!loggedUser || loggedUser.role !== "teacher") {
+    alert("Unauthorized access");
+    location.href = "login.html";
+}
+
+/* ✅ Render shared header */
+renderHeader("Teacher Dashboard");
+
+/* =====================================================
+   UPLOAD NOTE
+===================================================== */
+function uploadNote() {
+    const className = classNameEl.value;
+    const subject = subjectEl.value;
+    const title = titleEl.value.trim();
+    const description = descriptionEl.value.trim();
+    const fileInput = fileEl;
+
+    if (!className || !subject || !title || !fileInput.files.length) {
+        alert("Class, Subject, Title and File are required");
+        return;
+    }
+
+    const reader = new FileReader();
+    const file = fileInput.files[0];
+
+    reader.onload = function () {
+        let materials = JSON.parse(localStorage.getItem("studyMaterials")) || [];
+
+        materials.push({
+            id: Date.now(),
+            className,
+            subject,
+            title,
+            description,
+            fileName: file.name,
+            fileData: reader.result,
+            uploadedBy: loggedUser.login_id,
+            uploaderName: loggedUser.name,
+            uploadedOn: new Date().toLocaleDateString()
+        });
+
+        localStorage.setItem("studyMaterials", JSON.stringify(materials));
+
+        classNameEl.value = "";
+        subjectEl.value = "";
+        titleEl.value = "";
+        descriptionEl.value = "";
+        fileInput.value = "";
+
+        loadMyNotes();
+    };
+
+    reader.readAsDataURL(file);
+}
+
+
+/* =====================================================
+   UPLOAD HOMEWORK
+===================================================== */
+function uploadHomework() {
+    const className = hwClass.value;
+    const subject = hwSubject.value;
+    const title = hwTitle.value.trim();
+    const description = hwDescription.value.trim();
+    const fileInput = hwFile;
+
+    if (!className || !subject || !title) {
+        alert("Class, Subject and Homework Title are required");
+        return;
+    }
+
+    const reader = new FileReader();
+    const file = fileInput.files[0];
+
+    reader.onload = function () {
+        const homeworks = JSON.parse(localStorage.getItem("homeworks")) || [];
+
+        homeworks.push({
+            id: Date.now(),
+            className,
+            subject,
+            title,
+            description,
+            fileName: file ? file.name : "",
+            fileData: file ? reader.result : "",
+            uploadedBy: loggedUser.login_id,
+            uploaderName: loggedUser.name,
+            assignedOn: new Date().toLocaleDateString()
+        });
+
+        localStorage.setItem("homeworks", JSON.stringify(homeworks));
+
+        hwClass.value = "";
+        hwSubject.value = "";
+        hwTitle.value = "";
+        hwDescription.value = "";
+        hwFile.value = "";
+
+        loadMyHomework();
+    };
+
+    if (file) {
+        reader.readAsDataURL(file);
+    } else {
+        reader.onload();
+    }
+}
+
+/* =====================================================
+   LOAD MY HOMEWORK
+===================================================== */
+function loadMyHomework() {
+    const homeworks = JSON.parse(localStorage.getItem("homeworks")) || [];
+    const myHW = homeworks.filter(h => h.uploadedBy === loggedUser.login_id);
+
+    hwTable.innerHTML = "";
+    hwEmpty.textContent = "";
+
+    if (!myHW.length) {
+        hwEmpty.textContent = "No homework uploaded yet.";
+        return;
+    }
+
+    myHW.forEach(h => {
+        hwTable.innerHTML += `
+        <tr>
+            <td data-label="Title">${h.title}</td>
+            <td data-label="Class">${h.className}</td>
+            <td data-label="Subject">${h.subject}</td>
+            <td data-label="File">
+                ${h.fileName
+                    ? `<a href="${h.fileData}" download="${h.fileName}">${h.fileName}</a>`
+                    : "-"
+                }
+            </td>
+            <td data-label="Assigned On">${h.assignedOn}</td>
+            <td data-label="Actions">
+                <button class="delete-btn" onclick="deleteHomework(${h.id})">Delete</button>
+            </td>
+        </tr>`;
+    });
+}
+
+/* =====================================================
+   DELETE HOMEWORK
+===================================================== */
+function deleteHomework(id) {
+    if (!confirm("Delete this homework?")) return;
+
+    let homeworks = JSON.parse(localStorage.getItem("homeworks")) || [];
+    homeworks = homeworks.filter(h => h.id !== id);
+    localStorage.setItem("homeworks", JSON.stringify(homeworks));
+
+    loadMyHomework();
+}
+
+
+
+
+/* =====================================================
+   LOAD OWN NOTES
+===================================================== */
+function loadMyNotes() {
+    const materials = JSON.parse(localStorage.getItem("studyMaterials")) || [];
+    const myNotes = materials.filter(m => m.uploadedBy === loggedUser.login_id);
+
+    notesTable.innerHTML = "";
+    notesEmpty.textContent = "";
+
+    if (!myNotes.length) {
+        notesEmpty.textContent = "No uploads yet.";
+        return;
+    }
+
+    myNotes.forEach(m => {
+        notesTable.innerHTML += `
+        <tr>
+            <td data-label="Title">${m.title}</td>
+            <td data-label="Class">${m.className}</td>
+            <td data-label="Subject">${m.subject}</td>
+            <td data-label="File">
+                <a href="${m.fileData}" download="${m.fileName}">${m.fileName}</a>
+            </td>
+            <td data-label="Uploaded On">${m.uploadedOn}</td>
+            <td data-label="Actions">
+                <button class="delete-btn" onclick="deleteNote(${m.id})">Delete</button>
+            </td>
+        </tr>`;
+    });
+}
+
+/* =====================================================
+   DELETE NOTE
+===================================================== */
+function deleteNote(id) {
+    if (!confirm("Delete this note?")) return;
+
+    let materials = JSON.parse(localStorage.getItem("studyMaterials")) || [];
+    materials = materials.filter(m => m.id !== id);
+    localStorage.setItem("studyMaterials", JSON.stringify(materials));
+
+    loadMyNotes();
+}
+
+/*-----To See All Announcements------*/
+
+
+function loadTeacherAnnouncements() {
+    const anns = JSON.parse(localStorage.getItem("announcements")) || [];
+
+    const visible = anns.filter(a => a.active);
+
+    annList.innerHTML = "";
+    annEmpty.textContent = "";
+
+    if (!visible.length) {
+        annEmpty.textContent = "No announcements available.";
+        return;
+    }
+
+    annList.innerHTML = visible.map(a => `
+        <div class="card">
+            <b>${a.title}</b><br>
+            <small>Posted on: ${a.time}</small><br>
+            ${a.message}
+        </div>
+    `).join("");
+}
+
+/* =====================================================
+   MARK ATTENDANCE
+===================================================== */
+const today = new Date().toISOString().split("T")[0];
+document.getElementById("attDate").textContent = today;
+
+function markAttendance() {
+    const status = document.getElementById("attStatus").value;
+    const msg = document.getElementById("attMsg");
+
+    if (!status) {
+        msg.textContent = "Please select attendance status.";
+        return;
+    }
+
+    let attendance = JSON.parse(localStorage.getItem("attendance")) || [];
+
+    // Prevent duplicate marking
+    const alreadyMarked = attendance.find(a =>
+        a.teacherId === loggedUser.login_id && a.date === today
+    );
+
+    if (alreadyMarked) {
+        msg.textContent = "Attendance already marked for today.";
+        return;
+    }
+
+    attendance.push({
+        teacherId: loggedUser.login_id,
+        teacherName: loggedUser.name,
+        date: today,
+        status: status,
+        markedAt: new Date().toLocaleTimeString()
+    });
+
+    localStorage.setItem("attendance", JSON.stringify(attendance));
+
+    msg.textContent = "Attendance marked successfully.";
+}
+
+
+
+
+/* =====================================================
+   INIT
+===================================================== */
+const classNameEl = document.getElementById("className");
+const subjectEl = document.getElementById("subject");
+const titleEl = document.getElementById("title");
+const descriptionEl = document.getElementById("description");
+const fileEl = document.getElementById("file");
+const notesTable = document.getElementById("notesTable");
+const notesEmpty = document.getElementById("notesEmpty");
+
+const hwClass = document.getElementById("hwClass");
+const hwSubject = document.getElementById("hwSubject");
+const hwTitle = document.getElementById("hwTitle");
+const hwDescription = document.getElementById("hwDescription");
+const hwFile = document.getElementById("hwFile");
+const hwTable = document.getElementById("hwTable");
+const hwEmpty = document.getElementById("hwEmpty");
+
+
+
+
+
+
+
+
+
+
+populateClassDropdown("className");
+populateSubjectDropdown("subject");
+loadMyNotes();
+loadTeacherAnnouncements();
+
+populateClassDropdown("hwClass");
+populateSubjectDropdown("hwSubject");
+loadMyHomework();
+
+</script>
+
+<link rel="stylesheet" href="footer.css">
+<script src="footer.js"></script>
+<script>
+  renderFooter();
+</script>
+
+<script src="security.js"></script>
+
+
+</body>
+</html>

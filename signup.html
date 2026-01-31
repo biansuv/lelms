@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+
+<link rel="stylesheet" href="base.css">
+
+<!-- Mobile responsiveness -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Sign Up – Literacy Education</title>
+
+<style>
+
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+
+
+.signup-box {
+    background: #ffffff;
+    padding: 24px 22px;
+    max-width: 380px;
+    width: 100%;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+h2 {
+    text-align: center;
+    margin-bottom: 18px;
+    color: #2c3e50;
+}
+
+label {
+    display: block;
+    margin-top: 12px;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+input, select {
+    width: 100%;
+    padding: 10px;
+    margin-top: 6px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 15px;
+}
+
+button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 22px;
+    background: #2cc7a2;
+    border: none;
+    color: white;
+    font-size: 16px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #28b08f;
+}
+
+.note {
+    margin-top: 15px;
+    font-size: 13px;
+    color: #555;
+    text-align: center;
+}
+
+.hidden {
+    display: none;
+}
+</style>
+</head>
+
+<body>
+
+<div class="signup-box">
+    <h2>Literacy Education</h2>
+
+    <label>Sign up as</label>
+    <select id="role" onchange="toggleFields()">
+        <option value="">-- Select Role --</option>
+        <option value="student">Student</option>
+        <option value="teacher">Teacher</option>
+    </select>
+
+    <label>Full Name</label>
+    <input type="text" id="fullName" placeholder="Enter full name">
+
+    <!-- STUDENT -->
+    <div id="studentFields" class="hidden">
+        <label>Class</label>
+        <select id="studentClass">
+            <option value="">-- Select Class --</option>
+        </select>
+    </div>
+
+    <!-- TEACHER -->
+    <div id="teacherFields" class="hidden">
+        <label>Subject</label>
+        <select id="teacherSubject">
+            <option value="">-- Select Subject --</option>
+        </select>
+    </div>
+
+    <label>Username</label>
+    <input type="text" id="loginId" placeholder="Choose a username">
+
+    <label>Password</label>
+    <input type="password" id="password" placeholder="Choose a password">
+
+    <button type="button" onclick="submitSignup()">Submit Sign-Up Request</button>
+
+    <div class="note">
+        Your request will be approved by Admin
+    </div>
+</div>
+
+<!-- ✅ LOAD CONFIG FIRST -->
+<script src="config.js"></script>
+
+<script>
+/* =====================================================
+   FIELD TOGGLE
+===================================================== */
+function toggleFields() {
+    const role = roleEl.value;
+    studentFields.classList.add("hidden");
+    teacherFields.classList.add("hidden");
+
+    if (role === "student") studentFields.classList.remove("hidden");
+    if (role === "teacher") teacherFields.classList.remove("hidden");
+}
+
+/* =====================================================
+   SIGNUP SUBMIT
+===================================================== */
+function submitSignup() {
+    const role = roleEl.value;
+    const name = fullName.value.trim();
+    const loginId = loginIdEl.value.trim();
+    const password = passwordEl.value.trim();
+
+    const classValue = role === "student" ? studentClass.value : "";
+    const subjectValue = role === "teacher" ? teacherSubject.value : "";
+
+    if (!role || !name || !loginId || !password) {
+        alert("Please fill all required fields");
+        return;
+    }
+
+    if (role === "student" && !classValue) {
+        alert("Please select class");
+        return;
+    }
+
+    if (role === "teacher" && !subjectValue) {
+        alert("Please select subject");
+        return;
+    }
+
+    let signupRequests = JSON.parse(localStorage.getItem("signupRequests")) || [];
+    let users = JSON.parse(localStorage.getItem("users")) || [];
+
+    if (
+        signupRequests.some(r => r.login_id === loginId) ||
+        users.some(u => u.login_id === loginId)
+    ) {
+        alert("Username already exists");
+        return;
+    }
+
+    signupRequests.push({
+        name,
+        role,
+        class: classValue,
+        subject: subjectValue,
+        login_id: loginId,
+        password,          // demo only
+        status: "pending",
+        requestedOn: new Date().toLocaleDateString()
+    });
+
+    localStorage.setItem("signupRequests", JSON.stringify(signupRequests));
+
+    alert("Sign-up request submitted successfully.");
+    location.reload();
+}
+
+/* =====================================================
+   INIT
+===================================================== */
+populateClassDropdown("studentClass");
+populateSubjectDropdown("teacherSubject");
+
+/* Quick refs */
+const roleEl = document.getElementById("role");
+const fullName = document.getElementById("fullName");
+const loginIdEl = document.getElementById("loginId");
+const passwordEl = document.getElementById("password");
+const studentClass = document.getElementById("studentClass");
+const teacherSubject = document.getElementById("teacherSubject");
+const studentFields = document.getElementById("studentFields");
+const teacherFields = document.getElementById("teacherFields");
+</script>
+
+
+<link rel="stylesheet" href="footer.css">
+<script src="footer.js"></script>
+<script>
+  renderFooter();
+</script>
+
+
+</body>
+</html>

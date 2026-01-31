@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+
+<link rel="stylesheet" href="base.css">
+
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Dashboard – Literacy LMS</title>
+
+<style>
+
+body {
+    padding: 10px;
+}
+
+
+/* ---------- Shared Header ---------- */
+.top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+.top-bar h2 {
+    margin: 0;
+    font-size: 20px;
+    color: #2c3e50;
+}
+.logout-btn {
+    background: #e74c3c;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 6px 10px;
+    cursor: pointer;
+}
+
+/* ---------- Section ---------- */
+.section {
+    background: #fff;
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 6px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+.section h3 { margin-top: 0; }
+
+/* ---------- Filters ---------- */
+label {
+    display: block;
+    font-weight: bold;
+    margin-top: 10px;
+}
+select {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+}
+
+/* ---------- Table ---------- */
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    font-size: 14px;
+}
+th { background: #f1f1f1; }
+
+/* ---------- Announcement Card ---------- */
+.card {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 10px;
+    margin-bottom: 10px;
+    background: #fafafa;
+}
+
+.empty {
+    font-size: 13px;
+    color: #777;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 768px) {
+    table, thead, tbody, th, td, tr {
+        display: block;
+    }
+    thead { display: none; }
+    tr {
+        border: 1px solid #ddd;
+        margin-bottom: 10px;
+        border-radius: 4px;
+        padding: 8px;
+    }
+    td {
+        border: none;
+        padding: 4px 0;
+    }
+    td::before {
+        content: attr(data-label);
+        font-weight: bold;
+        display: block;
+        color: #555;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- ================= ANNOUNCEMENTS ================= -->
+<div class="section">
+<h3>Announcements</h3>
+<div id="studentAnnouncements"></div>
+</div>
+
+<!-- ================= FILTER ================= -->
+<div class="section">
+<h3>Filter Notes</h3>
+<label>Subject</label>
+<select id="subjectFilter" onchange="loadNotes()">
+    <option value="">All Subjects</option>
+</select>
+</div>
+
+<!-- ================= NOTES ================= -->
+<div class="section">
+<h3>Available Notes</h3>
+
+<table>
+<thead>
+<tr>
+<th>Title</th>
+<th>Subject</th>
+<th>Teacher</th>
+<th>Description</th>
+<th>File</th>
+<th>Uploaded On</th>
+</tr>
+</thead>
+<tbody id="notesTable"></tbody>
+</table>
+
+<div id="notesEmpty" class="empty"></div>
+</div>
+
+<!-- ================= HOMEWORK ================= -->
+<div class="section">
+<h3>Homework</h3>
+
+<table>
+<thead>
+<tr>
+<th>Title</th>
+<th>Subject</th>
+<th>Teacher</th>
+
+<th>Description</th>
+<th>File</th>
+<th>Assigned On</th>
+
+</tr>
+</thead>
+<tbody id="hwTable"></tbody>
+</table>
+
+<div id="hwEmpty" class="empty"></div>
+</div>
+
+
+
+
+<!-- ✅ SHARED SCRIPTS (ORDER MATTERS) -->
+<script src="config.js"></script>
+<script src="auth.js"></script>
+<script src="header.js"></script>
+
+<script>
+/* =====================================================
+   ROUTE PROTECTION
+===================================================== */
+const loggedUser = JSON.parse(localStorage.getItem("loggedUser"));
+
+if (!loggedUser || loggedUser.role !== "student") {
+    alert("Unauthorized access");
+    location.href = "login.html";
+}
+
+/* ✅ Render shared header */
+renderHeader("Student Dashboard");
+
+/* =====================================================
+   FIND STUDENT CLASS
+===================================================== */
+const users = JSON.parse(localStorage.getItem("users")) || [];
+const studentRecord = users.find(
+    u => u.login_id === loggedUser.login_id && u.role === "student"
+);
+
+if (!studentRecord) {
+    alert("Student record not found.");
+    location.href = "login.html";
+}
+
+const STUDENT_CLASS = studentRecord.class;
+
+/* =====================================================
+   LOAD ANNOUNCEMENTS
+===================================================== */
+function loadStudentAnnouncements() {
+    const container = document.getElementById("studentAnnouncements");
+    let announcements = JSON.parse(localStorage.getItem("announcements")) || [];
+
+    const relevant = announcements.filter(a =>
+        a.active &&
+        (a.targetClasses.includes("ALL") ||
+         a.targetClasses.includes(STUDENT_CLASS))
+    );
+
+    container.innerHTML = "";
+
+    if (!relevant.length) {
+        container.innerHTML = "<div class='empty'>No announcements.</div>";
+        return;
+    }
+
+    relevant.forEach(a => {
+        container.innerHTML += `
+        <div class="card">
+            <b>${a.title}</b><br>
+            <small>${a.message}</small><br>
+            <small>Posted on: ${a.time}</small>
+        </div>`;
+    });
+}
+
+/* =====================================================
+   LOAD NOTES
+===================================================== */
+function loadNotes() {
+    const subjectFilter = subjectFilterEl.value;
+    const materials = JSON.parse(localStorage.getItem("studyMaterials")) || [];
+
+    const filtered = materials.filter(m =>
+        m.className === STUDENT_CLASS &&
+        (!subjectFilter || m.subject === subjectFilter)
+    );
+
+    notesTable.innerHTML = "";
+    notesEmpty.textContent = "";
+
+    if (!filtered.length) {
+        notesEmpty.textContent = "No notes available for your class.";
+        return;
+    }
+
+    filtered.forEach(m => {
+        notesTable.innerHTML += `
+        <tr>
+            <td data-label="Title">${m.title}</td>
+            <td data-label="Subject">${m.subject}</td>
+            <td data-label="Teacher">${m.uploaderName}</td>
+            <td data-label="Description">${m.description || "-"}</td>
+            <td data-label="File">
+                <a href="${m.fileData}" download="${m.fileName}">${m.fileName}</a>
+            </td>
+            <td data-label="Uploaded On">${m.uploadedOn}</td>
+        </tr>`;
+    });
+}
+
+
+/* =====================================================
+   LOAD HOMEWORK FOR STUDENT
+===================================================== */
+function loadStudentHomework() {
+    const homeworks = JSON.parse(localStorage.getItem("homeworks")) || [];
+
+    const relevant = homeworks.filter(h =>
+        h.className === STUDENT_CLASS
+    );
+
+    hwTable.innerHTML = "";
+    hwEmpty.textContent = "";
+
+    if (!relevant.length) {
+        hwEmpty.textContent = "No homework assigned for your class.";
+        return;
+    }
+
+    relevant.forEach(h => {
+        hwTable.innerHTML += `
+        <tr>
+            <td data-label="Title">${h.title}</td>
+            <td data-label="Subject">${h.subject}</td>
+            <td data-label="Description">${h.description || "-"}</td>
+            <td data-label="File">
+                ${h.fileName
+                    ? `<a href="${h.fileData}" download="${h.fileName}">${h.fileName}</a>`
+                    : "-"
+                }
+            </td>
+            <td data-label="Assigned On">${h.assignedOn}</td>
+            <td data-label="Teacher">${h.uploaderName}</td>
+        </tr>`;
+    });
+}
+
+
+
+
+
+
+/* =====================================================
+   INIT
+===================================================== */
+const subjectFilterEl = document.getElementById("subjectFilter");
+const notesTable = document.getElementById("notesTable");
+const notesEmpty = document.getElementById("notesEmpty");
+
+const hwTable = document.getElementById("hwTable");
+const hwEmpty = document.getElementById("hwEmpty");
+
+populateSubjectDropdown("subjectFilter");
+loadStudentAnnouncements();
+loadNotes();
+
+loadStudentHomework();
+
+
+</script>
+
+
+<link rel="stylesheet" href="footer.css">
+<script src="footer.js"></script>
+<script>
+  renderFooter();
+</script>
+
+<script src="security.js"></script>
+
+
+</body>
+</html>

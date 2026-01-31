@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+
+<link rel="stylesheet" href="base.css">
+
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login – Literacy Education</title>
+
+<style>
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+}
+
+
+.login-box {
+    background: #ffffff;
+    padding: 28px 26px;
+    max-width: 380px;
+    width: 100%;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #2c3e50;
+}
+
+label {
+    display: block;
+    margin-top: 12px;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    margin-top: 6px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 15px;
+}
+
+button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 22px;
+    background: #2cc7a2;
+    border: none;
+    color: white;
+    font-size: 16px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #28b08f;
+}
+
+.login-footer {
+    margin-top: 15px;
+    font-size: 13px;
+    text-align: center;
+}
+
+.login-footer a {
+    color: #2c7be5;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="login-box">
+    <h2>Literacy Education</h2>
+
+    <label>Username</label>
+    <input type="text" id="username" placeholder="Enter username">
+
+    <label>Password</label>
+    <input type="password" id="password" placeholder="Enter password">
+
+    <!-- IMPORTANT -->
+    <button type="button" onclick="login()">Login</button>
+
+    <div class="login-footer">
+    New user? <a href="signup.html">Sign up here</a>
+    </div>
+
+</div>
+
+<script>
+
+/* ===============================
+   STATIC ADMIN (PHASE–1)
+================================ */
+const ADMIN_LOGIN = "admin";
+const ADMIN_PASSWORD = "admin1234";
+
+function login() {
+    const username = document.getElementById("username").value.trim();
+    const password = document.getElementById("password").value.trim();
+
+    if (!username || !password) {
+        alert("Please enter username and password");
+        return;
+    }
+
+    /* ---------- ADMIN LOGIN ---------- */
+    if (username === ADMIN_LOGIN && password === ADMIN_PASSWORD) {
+        localStorage.setItem("loggedUser", JSON.stringify({
+            login_id: ADMIN_LOGIN,
+            role: "admin"
+        }));
+        location.href = "admin.html";
+        return;
+    }
+
+    /* ---------- TEACHER / STUDENT LOGIN ---------- */
+    const users = JSON.parse(localStorage.getItem("users")) || [];
+
+    const user = users.find(u =>
+        u.login_id === username &&
+        u.password &&                    // 🔑 ensure password exists
+        u.password === password
+    );
+
+    if (!user) {
+        alert("Invalid credentials or account not approved yet.");
+        return;
+    }
+
+    /* ---------- SAVE SESSION ---------- */
+    localStorage.setItem("loggedUser", JSON.stringify({
+        login_id: user.login_id,
+        role: user.role,
+        roll_no: user.roll_no,
+        name: user.name
+    }));
+
+    /* ---------- ROLE BASED REDIRECT ---------- */
+    if (user.role === "teacher") {
+        location.href = "teacher.html";
+    } else if (user.role === "student") {
+        location.href = "student.html";
+    } else {
+        alert("Unknown role");
+    }
+}
+
+/* ---------- LOGOUT ---------- */
+function logout() {
+    localStorage.removeItem("loggedUser");
+    location.href = "login.html";
+}
+
+</script>
+
+<link rel="stylesheet" href="footer.css">
+<script src="footer.js"></script>
+<script>
+  renderFooter();
+</script>
+
+
+
+</body>
+</html>

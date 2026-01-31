@@ -1,0 +1,36 @@
+/* ---------- Fixed Footer ---------- */
+.footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: #2c3e50;
+  text-align: center;
+  padding: 10px;
+  font-size: 13px;
+  color: #eee;
+  border-top: 1px solid #ddd;
+  z-index: 1000;
+}
+
+/* ---------- Mobile ---------- */
+@media (max-width: 480px) {
+  .footer {
+    font-size: 12px;
+    padding: 6px;
+  }
+}
+
+.footer a {
+  color: #9adfd0;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.footer a:hover {
+  text-decoration: underline;
+}
+
+body {
+  padding-bottom: 50px; /* height of footer */
+}
