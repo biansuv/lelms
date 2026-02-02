@@ -2,132 +2,14 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-
-<link rel="stylesheet" href="base.css">
-
-
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Teacher Dashboard – Literacy LMS</title>
 
-<style>
-
-body {
-    padding: 10px;
-}
-
-
-/* ---------- Shared Header ---------- */
-.top-bar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 12px;
-}
-.top-bar h2 {
-    margin: 0;
-    font-size: 20px;
-    color: #2c3e50;
-}
-.logout-btn {
-    background: #e74c3c;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    padding: 6px 10px;
-    cursor: pointer;
-}
-
-/* ---------- Section ---------- */
-.section {
-    background: #fff;
-    padding: 15px;
-    margin-bottom: 20px;
-    border-radius: 6px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-}
-.section h3 { margin-top: 0; }
-
-/* ---------- Form ---------- */
-label {
-    display: block;
-    margin-top: 10px;
-    font-weight: bold;
-    font-size: 14px;
-}
-
-input, textarea, select {
-    width: 100%;
-    padding: 8px;
-    margin-top: 5px;
-    font-size: 14px;
-}
-
-textarea { resize: vertical; }
-
-/* ---------- Buttons ---------- */
-.upload-btn {
-    margin-top: 12px;
-    padding: 8px 12px;
-    font-size: 14px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    background: #2cc7a2;
-    color: white;
-}
-
-.delete-btn {
-    padding: 5px 8px;
-    font-size: 12px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    background: #c0392b;
-    color: white;
-}
-
-/* ---------- Table ---------- */
-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-th, td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    font-size: 14px;
-}
-th { background: #f1f1f1; }
-
-.empty {
-    font-size: 13px;
-    color: #777;
-}
-
-/* ---------- Responsive ---------- */
-@media (max-width: 768px) {
-    table, thead, tbody, th, td, tr {
-        display: block;
-    }
-    thead { display: none; }
-    tr {
-        border: 1px solid #ddd;
-        margin-bottom: 10px;
-        border-radius: 4px;
-        padding: 8px;
-    }
-    td {
-        border: none;
-        padding: 4px 0;
-    }
-    td::before {
-        content: attr(data-label);
-        font-weight: bold;
-        display: block;
-        color: #555;
-    }
-}
-</style>
+<link rel="stylesheet" href="base.css">
+<link rel="stylesheet" href="footer.css">
 </head>
+
 
 <body>
 
@@ -153,16 +35,25 @@ th { background: #f1f1f1; }
 
 <!-- ================= ANNOUNCEMENTS ================= -->
 <div class="section">
-    <h3>Announcements</h3>
+
+    <button class="upload-btn" id="annToggleBtn" onclick="toggleAnnouncements()">
+        Hide Announcements
+    </button>
+
     <div id="annList"></div>
     <div id="annEmpty" class="empty"></div>
-</div>
 
+</div>
 
 
 <!-- ================= UPLOAD NOTES ================= -->
 <div class="section">
-<h3>Upload Notes</h3>
+<h3 class="section-header">
+    Notes
+<button class="toggle-btn" onclick="toggleSection('notesBody', this)">▲</button>
+</h3>
+
+<div id="notesBody" style="display:none;">
 
 <label>Class</label>
 <select id="className">
@@ -183,13 +74,20 @@ th { background: #f1f1f1; }
 <label>File</label>
 <input type="file" id="file">
 
-<button class="upload-btn" onclick="uploadNote()">Upload</button>
+<button class="upload-btn" onclick="uploadNote()">Upload Notes</button>
+</div>
 </div>
 
 
 <!-- ================= UPLOAD HOMEWORK ================= -->
 <div class="section">
-<h3>Upload Homework</h3>
+
+<h3 class="section-header">
+    Homework
+    <button class="toggle-btn" onclick="toggleSection('hwBody', this)">▲</button>
+</h3>
+
+<div id="hwBody" style="display:none;">
 
 <label>Class</label>
 <select id="hwClass">
@@ -211,19 +109,20 @@ th { background: #f1f1f1; }
 <input type="file" id="hwFile">
 
 <button class="upload-btn" onclick="uploadHomework()">Upload Homework</button>
-</div>
 
-
-
-
-
-
-
+</div>  <!-- ✅ hwBody -->
+</div>  <!-- ✅ section -->
 
 
 <!-- ================= MY UPLOADED NOTES ================= -->
 <div class="section">
-<h3>My Uploaded Notes</h3>
+
+<h3 class="section-header">
+    My Uploaded Notes
+    <button class="toggle-btn" onclick="toggleSection('myNotesBody', this)">▲</button>
+</h3>
+
+<div id="myNotesBody" style="display:none;">
 
 <table>
 <thead>
@@ -240,12 +139,20 @@ th { background: #f1f1f1; }
 </table>
 
 <div id="notesEmpty" class="empty"></div>
-</div>
+
+</div>  <!-- ✅ myNotesBody -->
+</div>  <!-- ✅ section -->
 
 
-<!-- ================= MY HOMEWORK ================= -->
+<!-- ================= MY UPLOADED HOMEWORK ================= -->
 <div class="section">
-<h3>My Uploaded Homework</h3>
+
+<h3 class="section-header">
+    My Uploaded Homework
+    <button class="toggle-btn" onclick="toggleSection('myHWBody', this)">▲</button>
+</h3>
+
+<div id="myHWBody" style="display:none;">
 
 <table>
 <thead>
@@ -262,7 +169,10 @@ th { background: #f1f1f1; }
 </table>
 
 <div id="hwEmpty" class="empty"></div>
-</div>
+
+</div>  <!-- ✅ myHWBody -->
+</div>  <!-- ✅ section -->
+
 
 <!-- ✅ SHARED SCRIPTS (ORDER MATTERS) -->
 <script src="config.js"></script>
@@ -431,9 +341,6 @@ function deleteHomework(id) {
     loadMyHomework();
 }
 
-
-
-
 /* =====================================================
    LOAD OWN NOTES
 ===================================================== */
@@ -481,28 +388,91 @@ function deleteNote(id) {
 
 /*-----To See All Announcements------*/
 
+function formatDateToDDMonYYYY(timeString) {
+
+    // New ISO format
+    if (timeString && timeString.includes("T")) {
+        const d = new Date(timeString);
+        return d.toLocaleString("en-GB", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit"
+        }).replace(",", "");
+    }
+
+    // Old format: DD/MM/YYYY, HH:mm:ss
+    if (timeString && timeString.includes("/")) {
+        const [datePart, timePart] = timeString.split(", ");
+        const [dd, mm, yyyy] = datePart.split("/");
+
+        const d = new Date(`${yyyy}-${mm}-${dd}T${timePart}`);
+
+        return d.toLocaleString("en-GB", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit"
+        }).replace(",", "");
+    }
+
+    return timeString || "";
+}
 
 function loadTeacherAnnouncements() {
     const anns = JSON.parse(localStorage.getItem("announcements")) || [];
 
-    const visible = anns.filter(a => a.active);
+    const relevant = anns.filter(a =>
+        a.active &&
+        a.target &&
+        a.target.teachers === true
+    );
 
     annList.innerHTML = "";
     annEmpty.textContent = "";
 
-    if (!visible.length) {
+    if (!relevant.length) {
         annEmpty.textContent = "No announcements available.";
         return;
     }
 
-    annList.innerHTML = visible.map(a => `
-        <div class="card">
-            <b>${a.title}</b><br>
-            <small>Posted on: ${a.time}</small><br>
-            ${a.message}
-        </div>
-    `).join("");
+    relevant.forEach(a => {
+        annList.innerHTML += `
+            <div class="card">
+                <b>${a.title}</b><br>
+                ${a.message}<br>
+                <small>Posted on: ${formatDateToDDMonYYYY(a.time)}</small>
+            </div>
+        `;
+    });
 }
+
+
+
+
+
+let announcementsVisible = true;
+
+function toggleAnnouncements() {
+    announcementsVisible = !announcementsVisible;
+
+    const annSection = document.getElementById("annList");
+    const annEmpty = document.getElementById("annEmpty");
+    const btn = document.getElementById("annToggleBtn");
+
+    if (announcementsVisible) {
+        annSection.style.display = "block";
+        annEmpty.style.display = "block";
+        btn.textContent = "Hide Announcements";
+    } else {
+        annSection.style.display = "none";
+        annEmpty.style.display = "none";
+        btn.textContent = "Show Announcements";
+    }
+}
+
 
 /* =====================================================
    MARK ATTENDANCE
@@ -566,15 +536,6 @@ const hwFile = document.getElementById("hwFile");
 const hwTable = document.getElementById("hwTable");
 const hwEmpty = document.getElementById("hwEmpty");
 
-
-
-
-
-
-
-
-
-
 populateClassDropdown("className");
 populateSubjectDropdown("subject");
 loadMyNotes();
@@ -586,10 +547,30 @@ loadMyHomework();
 
 </script>
 
-<link rel="stylesheet" href="footer.css">
 <script src="footer.js"></script>
 <script>
   renderFooter();
+
+/* =====================================================
+   Notes Roll-In Roll Out Function
+===================================================== */
+
+function toggleSection(sectionId, btn) {
+    const section = document.getElementById(sectionId);
+
+    const isHidden = section.style.display === "none";
+
+    if (isHidden) {
+        section.style.display = "block";
+        btn.textContent = "▼"; // now expanded
+    } else {
+        section.style.display = "none";
+        btn.textContent = "▲"; // now collapsed
+    }
+}
+
+
+
 </script>
 
 <script src="security.js"></script>
