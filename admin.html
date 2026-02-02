@@ -1,93 +1,34 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Admin Dashboard – Literacy LMS</title>
 
-<style>
-body {
-    font-family: Arial, sans-serif;
-    background: #f4f6f8;
-    margin: 0;
-    padding: 10px;
-}
-
-/* ---------- Shared Header ---------- */
-.top-bar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 12px;
-}
-.top-bar h2 {
-    margin: 0;
-    font-size: 20px;
-    color: #2c3e50;
-}
-.logout-btn {
-    background: #e74c3c;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    padding: 6px 10px;
-    cursor: pointer;
-}
-
-/* ---------- Section ---------- */
-.section {
-    background: #fff;
-    padding: 15px;
-    margin-bottom: 20px;
-    border-radius: 6px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-}
-.section h3 { margin-top: 0; }
-
-/* ---------- Table ---------- */
-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-th, td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    font-size: 14px;
-}
-th { background: #f1f1f1; }
-
-/* ---------- Buttons ---------- */
-.btn {
-    padding: 5px 8px;
-    font-size: 12px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-.approve { background: #2ecc71; color: white; }
-.reject  { background: #e74c3c; color: white; }
-.remove  { background: #c0392b; color: white; }
-.post    { background: #3498db; color: white; }
-
-.card {
-    border: 1px solid #ddd;
-    padding: 10px;
-    margin-top: 8px;
-    border-radius: 4px;
-}
-</style>
-
-
-
-
-
+<link rel="stylesheet" href="base.css">
+<link rel="stylesheet" href="footer.css">
 </head>
 
 <body>
 
 <!-- ================= SIGNUP REQUESTS ================= -->
 <div class="section">
-<h3>Signup Requests</h3>
+<h3 class="section-header attention">
+    Signup Requests
+    
+    <button class="toggle-btn"
+            onclick="toggleSection('signupReqBody', this)">
+        ▲
+    </button>
+</h3>
+<div id="signupReqBody"
+     class="section-body"
+     style="display:none;"
+     data-loaded="false">
+
+
 <table>
 <thead>
 <tr>
@@ -98,11 +39,23 @@ th { background: #f1f1f1; }
 </table>
 <div id="requestEmpty"></div>
 </div>
+</div>
 
 <!-- ================= USERS ================= -->
 <div class="section">
-<h3>Approved Users</h3>
+
+<h3 class="section-header">
+    Approved Users
+    <button class="toggle-btn"
+            onclick="toggleSection('approvedUsersBody', this)">
+        ▲
+    </button>
+</h3>
+
+<div id="approvedUsersBody" class="section-body" style="display:none;">
+
 <table>
+
 <thead>
 <tr>
 <th>Roll No</th><th>Name</th><th>Role</th><th>Class / Subject</th><th>Username</th><th>Actions</th>
@@ -112,37 +65,90 @@ th { background: #f1f1f1; }
 </table>
 <div id="userEmpty"></div>
 </div>
+</div>
 
 <!-- ================= ANNOUNCEMENTS ================= -->
 <div class="section">
-<h3>Create Announcement</h3>
 
+<h3 class="section-header">
+    Create Announcement
+    <button class="toggle-btn"
+            onclick="toggleSection('announcementBody', this)">
+        ▲
+    </button>
+</h3>
+
+<div id="announcementBody" class="section-body" style="display:none;">
 <input id="annTitle" placeholder="Title"><br><br>
 <textarea id="annMessage" rows="3" placeholder="Message"></textarea><br>
 
-<label>
-<input type="checkbox" id="annAll" checked onchange="toggleClassSelect()"> Send to all students
-</label>
+<h4>Send Announcement To</h4>
 
-<div id="classSelectBox" style="display:none;">
-    <strong>Select Classes:</strong><br>
-    <label><input type="checkbox" value="6"> Class 6</label><br>
-    <label><input type="checkbox" value="7"> Class 7</label><br>
-    <label><input type="checkbox" value="8"> Class 8</label><br>
-    <label><input type="checkbox" value="9"> Class 9</label><br>
-    <label><input type="checkbox" value="10"> Class 10</label><br>
-    <label><input type="checkbox" value="11"> Class 11</label><br>
-    <label><input type="checkbox" value="12"> Class 12</label>
+<table class="target-table">
+  <tr>
+    <th>Target</th>
+    <th>Select</th>
+  </tr>
 
+  <tr>
+    <td>All Students (All Classes)</td>
+    <td><input type="checkbox" id="targetAllStudents"
+       onchange="handleAllStudentsToggle()"></td>
+  </tr>
 
-</div>
+  <tr>
+    <td>All Teachers</td>
+    <td><input type="checkbox" id="targetTeachers"></td>
+  </tr>
+
+  <tr>
+    <td>Class 6</td>
+    <td><input type="checkbox" class="targetClass" value="6"></td>
+  </tr>
+  <tr>
+    <td>Class 7</td>
+    <td><input type="checkbox" class="targetClass" value="7"></td>
+  </tr>
+  <tr>
+    <td>Class 8</td>
+    <td><input type="checkbox" class="targetClass" value="8"></td>
+  </tr>
+  <tr>
+    <td>Class 9</td>
+    <td><input type="checkbox" class="targetClass" value="9"></td>
+  </tr>
+  <tr>
+    <td>Class 10</td>
+    <td><input type="checkbox" class="targetClass" value="10"></td>
+  </tr>
+  <tr>
+    <td>Class 11</td>
+    <td><input type="checkbox" class="targetClass" value="11"></td>
+  </tr>
+  <tr>
+    <td>Class 12</td>
+    <td><input type="checkbox" class="targetClass" value="12"></td>
+  </tr>
+</table>
 
 <button class="btn post" onclick="postAnnouncement()">Post</button>
 </div>
+</div>
+
+<div id="annPostMsg" class="empty"></div>
+
 
 <!-- ================= TEACHER NOTES ================= -->
 <div class="section">
-<h3>Teacher Uploaded Notes</h3>
+<h3 class="section-header">
+    Teacher Uploaded Notes
+    <button class="toggle-btn"
+            onclick="toggleSection('teacherNotesBody', this)">
+        ▲
+    </button>
+</h3>
+<div id="teacherNotesBody" class="section-body" style="display:none;">
+
 
 <table>
 <thead>
@@ -160,10 +166,18 @@ th { background: #f1f1f1; }
 
 <div id="adminNotesEmpty" class="empty"></div>
 </div>
+</div>
 
 <!-- ================= TEACHER HOMEWORK ================= -->
 <div class="section">
-<h3>Teacher Assigned Homework</h3>
+<h3 class="section-header">
+    Teacher Assigned Homework
+    <button class="toggle-btn"
+            onclick="toggleSection('teacherHWBody', this)">
+        ▲
+    </button>
+</h3>
+<div id="teacherHWBody" class="section-body" style="display:none;">
 
 <table>
 <thead>
@@ -181,10 +195,19 @@ th { background: #f1f1f1; }
 
 <div id="adminHWEmpty" class="empty"></div>
 </div>
+</div>
 
 <!-- ================= TEACHER ATTENDANCE REPORT ================= -->
 <div class="section">
-<h3>Teacher Attendance Report</h3>
+<h3 class="section-header">
+    Teacher Attendance Report
+    <button class="toggle-btn"
+            onclick="toggleSection('attendanceBody', this)">
+        ▲
+    </button>
+</h3>
+<div id="attendanceBody" class="section-body" style="display:none;">
+
 
 <label>Select Month</label>
 <input type="month" id="attMonth" onchange="loadAttendanceReport()">
@@ -203,13 +226,21 @@ th { background: #f1f1f1; }
 
 <div id="attReportEmpty" class="empty"></div>
 </div>
-
-
+</div>
 
 
 <div class="section">
-<h3>Posted Announcements</h3>
+<h3 class="section-header">
+    Posted Announcements
+    <button class="toggle-btn"
+            onclick="toggleSection('postedAnnBody', this)">
+        ▲
+    </button>
+</h3>
+<div id="postedAnnBody" class="section-body" style="display:none;">
+
 <div id="annList"></div>
+</div>
 </div>
 
 <!-- ✅ SHARED SCRIPTS (ORDER MATTERS) -->
@@ -238,15 +269,28 @@ function generateRollNo(prefix) {
 /* ---------- LOAD SIGNUP REQUESTS ---------- */
 function loadRequests() {
     const list = JSON.parse(localStorage.getItem("signupRequests")) || [];
-    requestTable.innerHTML = list.map((r,i)=>`
+
+    requestTable.innerHTML = "";
+    requestEmpty.textContent = "";
+
+    if (!list.length) {
+        requestEmpty.textContent = "No pending signup requests.";
+        return;
+    }
+
+    requestTable.innerHTML = list.map((r, i) => `
         <tr>
             <td>${r.name}</td>
             <td>${r.role}</td>
-            <td>${r.role === "student" ? r.class : r.subject}</td>
+            <td>${r.class || r.subject || "-"}</td>
             <td>${r.login_id}</td>
             <td>
-                <button class="btn approve" onclick="approve(${i})">Approve</button>
-                <button class="btn reject" onclick="reject(${i})">Reject</button>
+                <button class="btn approve" onclick="approve(${i})">
+                    Approve
+                </button>
+                <button class="btn remove" onclick="reject(${i})">
+                    Reject
+                </button>
             </td>
         </tr>
     `).join("");
@@ -269,8 +313,6 @@ function approve(i){
         r.roll_no = generateRollNo("LES");
     }
 
-    
-
     users.push(r);
 
     localStorage.setItem("users", JSON.stringify(users));
@@ -278,8 +320,8 @@ function approve(i){
 
     loadRequests();
     loadUsers();
+    
 }
-
 
 /* ---------- REJECT USER ---------- */
 function reject(i){
@@ -287,6 +329,7 @@ function reject(i){
     req.splice(i, 1);
     localStorage.setItem("signupRequests", JSON.stringify(req));
     loadRequests();
+    
 }
 
 /* ---------- LOAD USERS ---------- */
@@ -315,8 +358,6 @@ function loadUsers(){
     `).join("");
 }
 
-
-
 /* ---------- REMOVE USER ---------- */
 function removeUser(i){
     if (!confirm("Are you sure you want to permanently delete this user?")) {
@@ -329,14 +370,25 @@ function removeUser(i){
     loadUsers();
 }
 
+function handleAllStudentsToggle() {
+    const allStudentsChecked =
+        document.getElementById("targetAllStudents").checked;
 
+    const classCheckboxes =
+        document.querySelectorAll(".targetClass");
 
-/* ---------- ANNOUNCEMENTS ---------- */
-function toggleClassSelect(){
-    classSelectBox.style.display = annAll.checked ? "none" : "block";
+    classCheckboxes.forEach(cb => {
+        cb.disabled = allStudentsChecked;
+
+        if (allStudentsChecked) {
+            cb.checked = false; // clear class selection
+        }
+    });
 }
 
-function postAnnouncement(){
+/* ---------- ANNOUNCEMENTS ---------- */
+
+function postAnnouncement() {
     const title = annTitle.value.trim();
     const message = annMessage.value.trim();
 
@@ -345,48 +397,74 @@ function postAnnouncement(){
         return;
     }
 
-    let targetClasses = ["ALL"];
+    const target = {
+        allStudents: document.getElementById("targetAllStudents").checked,
+        teachers: document.getElementById("targetTeachers").checked,
+        classes: []
+    };
 
-    if (!annAll.checked) {
-        const checked = [...classSelectBox.querySelectorAll("input[type=checkbox]:checked")]
-                        .map(cb => cb.value);
+    document.querySelectorAll(".targetClass:checked").forEach(cb => {
+        target.classes.push(cb.value);
+    });
 
-        if (checked.length === 0) {
-            alert("Please select at least one class");
-            return;
-        }
-
-        targetClasses = checked;
+    if (!target.allStudents && !target.teachers && target.classes.length === 0) {
+        alert("Please select at least one target");
+        return;
     }
+
+    const confirmPost = confirm(
+        "Are you sure you want to post this announcement?\n\n" +
+        "This message will be visible immediately to the selected users."
+    );
+
+    if (!confirmPost) return;
 
     const anns = JSON.parse(localStorage.getItem("announcements")) || [];
 
+    // ✅ PUSH ANNOUNCEMENT (DATA ONLY)
     anns.push({
         title,
         message,
-        targetClasses,   // 👈 IMPORTANT
+        target,
         active: true,
-        time: new Date().toLocaleString()
+        time: new Date().toISOString()
     });
 
     localStorage.setItem("announcements", JSON.stringify(anns));
 
+    // ✅ SUCCESS MESSAGE (UI)
+    const msg = document.getElementById("annPostMsg");
+    msg.textContent = "✅ Announcement posted successfully.";
+
+    setTimeout(() => {
+        msg.textContent = "";
+    }, 3000);
+
+    // ✅ RESET FORM
     annTitle.value = "";
     annMessage.value = "";
-    [...classSelectBox.querySelectorAll("input")].forEach(cb => cb.checked = false);
-    annAll.checked = true;
-    classSelectBox.style.display = "none";
+    document
+        .querySelectorAll(".target-table input[type=checkbox]")
+        .forEach(cb => {
+            cb.checked = false;
+            cb.disabled = false; // re-enable class checkboxes
+        });
 
     loadAnnouncements();
 }
-
 
 function loadAnnouncements(){
     const anns = JSON.parse(localStorage.getItem("announcements")) || [];
     annList.innerHTML = anns.map((a,i)=>`
         <div class="card">
             <b>${a.title}</b><br>
-            <small>To: ${a.targetClasses.join(", ")}</small><br>
+            <small>
+To:
+${a.target.allStudents ? " All Students " : ""}
+${a.target.teachers ? " All Teachers " : ""}
+${a.target.classes.length ? " Classes " + a.target.classes.join(", ") : ""}
+</small>
+
             ${a.message}<br>
             <button class="btn approve" onclick="toggleAnn(${i})">
                 ${a.active ? "Deactivate" : "Activate"}
@@ -418,7 +496,6 @@ function deleteAnn(i){
     localStorage.setItem("announcements", JSON.stringify(anns));
     loadAnnouncements();
 }
-
 
 /* =====================================================
    VIEW ALL TEACHER NOTES (ADMIN)
@@ -531,22 +608,30 @@ function loadAttendanceReport() {
     });
 }
 
+function formatDateToDDMonYYYY(isoString) {
+    const date = new Date(isoString);
 
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = date.toLocaleString("en-GB", { month: "short" });
+    const year = date.getFullYear();
 
+    const time = date.toLocaleTimeString("en-GB", {
+        hour: "2-digit",
+        minute: "2-digit"
+    });
+
+    return `${day}-${month}-${year}, ${time}`;
+}
 
 /* ---------- INIT ---------- */
 loadRequests();
 loadUsers();
 loadAnnouncements();
-
 loadAllTeacherNotes();
 loadAllTeacherHomework();
 
-
 </script>
 
-
-<link rel="stylesheet" href="footer.css">
 <script src="footer.js"></script>
 <script>
   renderFooter();
@@ -554,6 +639,25 @@ loadAllTeacherHomework();
 
 <script src="security.js"></script>
 
+<script>
+/* =====================================================
+   SECTION TOGGLE (Shared with Teacher)
+===================================================== */
+
+function toggleSection(sectionId, btn) {
+    const section = document.getElementById(sectionId);
+
+    if (section.style.display === "none") {
+        section.style.display = "block";
+        btn.textContent = "▼";
+    } else {
+        section.style.display = "none";
+        btn.textContent = "▲";
+    }
+}
+
+
+</script>
 
 </body>
 </html>
