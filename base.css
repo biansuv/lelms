@@ -338,12 +338,18 @@ label:has(input[type="checkbox"]) {
   text-align: left;
 }
 
-.target-table td:last-child {
-  text-align: center;
-}
-
 .target-table input:disabled {
   cursor: not-allowed;
   opacity: 0.6;
 }
 
+/* Vertically & horizontally center checkbox in target table */
+.target-table td:last-child {
+  display: flex;
+  align-items: center;   /* vertical center */
+  justify-content: center; /* horizontal center */
+}
+
+.target-table td:last-child input[type="checkbox"] {
+  transform: scale(1.15);
+}
