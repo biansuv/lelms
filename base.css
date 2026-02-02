@@ -184,7 +184,7 @@ th {
 /* =====================================================
    RESPONSIVE TABLE (MOBILE)
 ===================================================== */
-@media (max-width: 768px) {
+/*@media (max-width: 768px) {
   table,
   thead,
   tbody,
@@ -216,7 +216,32 @@ th {
     display: block;
     color: #555;
   }
+}*/
+
+@media (max-width: 768px) {
+  .target-table,
+  .target-table tr,
+  .target-table th,
+  .target-table td {
+    display: table;
+  }
+
+  .target-table th {
+    display: table-cell;
+  }
+
+  .target-table tr {
+    border: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .target-table td {
+    display: table-cell;
+    padding: 8px;
+  }
 }
+
 
 /* =====================================================
    FIXED FOOTER
