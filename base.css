@@ -40,7 +40,27 @@ main {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  padding: 12px 12px;               /* ⬅ left/right + top/bottom space */
   margin-bottom: 12px;
+  background: #f5f6f7;
+  border-bottom: 1px solid #ddd;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    font-size: 0.9rem;
+    background: #f2f4f8;
+    padding: 4px 10px;
+    border-radius: 16px;
+    color: #333;
+    gap: 12px;
 }
 
 .top-bar h2 {
@@ -54,9 +74,11 @@ main {
   color: white;
   border: none;
   border-radius: 4px;
-  padding: 6px 10px;
+  padding: 6px 12px;
   cursor: pointer;
 }
+
+
 
 /* =====================================================
    COMMON SECTION CONTAINER
