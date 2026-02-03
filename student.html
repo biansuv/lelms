@@ -14,15 +14,22 @@
 <!-- ================= ANNOUNCEMENTS ================= -->
 <div class="section">
 
-    <button class="upload-btn" id="studentAnnToggleBtn"
-            onclick="toggleStudentAnnouncements()">
-        Hide Announcements
+<h3 class="section-header">
+    Announcements
+    <button class="toggle-btn"
+            onclick="toggleSection('studentAnnBody', this)">
+        ▲
     </button>
+</h3>
 
+<div id="studentAnnBody" class="section-body" style="display:none;">
     <div id="studentAnnouncements"></div>
     <div id="studentAnnEmpty" class="empty"></div>
+</div>
 
 </div>
+
+
 
 <!-- ================= FILTER ================= -->
 <div class="section">
@@ -39,7 +46,7 @@
     <option value="">All Subjects</option>
 </select>
 </div>
-</div>
+</div> 
 
 <!-- ================= NOTES ================= -->
 <div class="section">
@@ -266,26 +273,6 @@ loadStudentAnnouncements();
 loadNotes();
 
 loadStudentHomework();
-
-let studentAnnouncementsVisible = true;
-
-function toggleStudentAnnouncements() {
-    studentAnnouncementsVisible = !studentAnnouncementsVisible;
-
-    const annList = document.getElementById("studentAnnouncements");
-    const annEmpty = document.getElementById("studentAnnEmpty");
-    const btn = document.getElementById("studentAnnToggleBtn");
-
-    if (studentAnnouncementsVisible) {
-        annList.style.display = "block";
-        annEmpty.style.display = "block";
-        btn.textContent = "Hide Announcements";
-    } else {
-        annList.style.display = "none";
-        annEmpty.style.display = "none";
-        btn.textContent = "Show Announcements";
-    }
-}
 
 function formatDateToDDMonYYYY(timeString) {
 
