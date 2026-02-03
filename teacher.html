@@ -15,35 +15,56 @@
 
 <!-- ================= ATTENDANCE ================= -->
 <div class="section">
-<h3>Mark Attendance</h3>
 
-<p><b>Date:</b> <span id="attDate"></span></p>
+<h3 class="section-header">
+    Mark Attendance
+    <button class="toggle-btn"
+            onclick="toggleSection('attendanceBody', this)">
+        ▲
+    </button>
+</h3>
 
-<select id="attStatus">
-    <option value="">-- Select Status --</option>
-    <option value="Present">Present</option>
-    <option value="Absent">Absent</option>
-    <option value="Leave">Leave</option>
-</select>
+<div id="attendanceBody" class="section-body" style="display:none;">
 
-<button class="upload-btn" onclick="markAttendance()">Submit Attendance</button>
+    <p><b>Date:</b> <span id="attDate"></span></p>
 
-<div id="attMsg" class="empty"></div>
+    <select id="attStatus">
+        <option value="">-- Select Status --</option>
+        <option value="Present">Present</option>
+        <option value="Absent">Absent</option>
+        <option value="Leave">Leave</option>
+    </select>
+
+    <button class="upload-btn" onclick="markAttendance()">
+        Submit Attendance
+    </button>
+
+    <div id="attMsg" class="empty"></div>
+
 </div>
+</div>
+
 
 
 
 <!-- ================= ANNOUNCEMENTS ================= -->
 <div class="section">
 
-    <button class="upload-btn" id="annToggleBtn" onclick="toggleAnnouncements()">
-        Hide Announcements
+<h3 class="section-header">
+    Announcements
+    <button class="toggle-btn"
+            onclick="toggleSection('annBody', this)">
+        ▲
     </button>
+</h3>
 
+<div id="annBody" class="section-body" style="display:none;">
     <div id="annList"></div>
     <div id="annEmpty" class="empty"></div>
+</div>
 
 </div>
+
 
 
 <!-- ================= UPLOAD NOTES ================= -->
@@ -448,31 +469,6 @@ function loadTeacherAnnouncements() {
         `;
     });
 }
-
-
-
-
-
-let announcementsVisible = true;
-
-function toggleAnnouncements() {
-    announcementsVisible = !announcementsVisible;
-
-    const annSection = document.getElementById("annList");
-    const annEmpty = document.getElementById("annEmpty");
-    const btn = document.getElementById("annToggleBtn");
-
-    if (announcementsVisible) {
-        annSection.style.display = "block";
-        annEmpty.style.display = "block";
-        btn.textContent = "Hide Announcements";
-    } else {
-        annSection.style.display = "none";
-        annEmpty.style.display = "none";
-        btn.textContent = "Show Announcements";
-    }
-}
-
 
 /* =====================================================
    MARK ATTENDANCE
